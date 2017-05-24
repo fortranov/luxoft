@@ -15,8 +15,8 @@ require("rxjs/add/operator/toPromise");
 var NotesComponent = (function () {
     function NotesComponent(http) {
         this.http = http;
-        this.obj = {};
         this.notesUrl = 'http://localhost:8080/notes';
+        this.selectedId = '';
         this.readNotes();
     }
     NotesComponent.prototype.readNotes = function () {
@@ -31,6 +31,11 @@ var NotesComponent = (function () {
             .toPromise()
             .then(function (response) { return response.json(); });
     };
+    NotesComponent.prototype.add = function () {
+        var note = { text: this.text, date: Date() };
+        this.text = "";
+        this.addNote(note);
+    };
     NotesComponent.prototype.addNote = function (note) {
         var _this = this;
         this.http.post(this.notesUrl, note).toPromise()
@@ -39,33 +44,6 @@ var NotesComponent = (function () {
             _this.readNotes();
         });
     };
-    NotesComponent.prototype.select = function (id, text) {
-        this.obj.text = text;
-        this.obj.id = id;
-        this.text = text;
-    };
-    NotesComponent.prototype.edit = function () {
-        var _this = this;
-        var id = this.obj.id;
-        this.obj.text = this.text;
-        this.http.post(this.notesUrl + '/edit/' + id, this.obj).toPromise()
-            .then(function (response) { return _this.readNotes(); });
-    };
-    /*  putNote(id: string) {
-          this.http.put(this.notesUrl+'/'+id, "").toPromise()
-              .then(response => console.log("Push to top, response", response) );
-      }*/
-    NotesComponent.prototype.add = function () {
-        var note = { text: this.text, date: Date() };
-        // this.notes.push(note);
-        this.text = "";
-        this.addNote(note);
-    };
-    /* sendToTop(id) {
-        // let noteOne  = this.notes.splice(id,1)[0];
-        // this.notes.unshift(noteOne);
-         this.putNote(id);
-     }*/
     NotesComponent.prototype.remove = function (id) {
         var _this = this;
         var params = new http_1.URLSearchParams();
@@ -77,12 +55,21 @@ var NotesComponent = (function () {
             _this.readNotes();
         });
     };
+    NotesComponent.prototype.select = function (id, text) {
+        this.selectedId = id;
+        this.text = text;
+    };
+    NotesComponent.prototype.edit = function () {
+        var _this = this;
+        this.http.post(this.notesUrl + '/edit/' + this.selectedId, { text: this.text }).toPromise()
+            .then(function (response) { _this.readNotes(); _this.text = ""; });
+    };
     return NotesComponent;
 }());
 NotesComponent = __decorate([
     core_1.Component({
         selector: 'notes',
-        template: "Notes list:\n    <table>\n        <tr *ngFor=\"let note of notes; let i=index\">\n           <td (click)=\"select(note._id, note.text)\">{{note.text}}</td> <td>{{note.date | date: 'HH:mm dd.MM.yyyy'}}</td> <td><button (click)=\"remove(note._id)\">remove!</button></td>\n        </tr>\n    </table>\n    <textarea [(ngModel)]=\"text\"></textarea>\n    <button (click)=\"add()\">Add</button>\n    <button (click)=\"edit()\">Edit</button>"
+        template: "Notes list:\n    <table>\n        <tr *ngFor=\"let note of notes; let i=index\">\n            <td (click)=\"select(note._id, note.text)\">{{note.text}}</td>\n            <td>{{note.date | date: 'HH:mm dd.MM.yyyy'}}</td> \n            <td><button (click)=\"remove(note._id)\">remove!</button></td>\n        </tr>\n    </table>\n    <textarea [(ngModel)]=\"text\"></textarea>\n    <button (click)=\"add()\">Add</button>\n    <button (click)=\"edit()\">Edit</button>"
     }),
     __metadata("design:paramtypes", [http_1.Http])
 ], NotesComponent);

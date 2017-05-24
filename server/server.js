@@ -8,7 +8,7 @@ var ObjectID = require('mongodb').ObjectID;
 
 var MongoStore = require('connect-mongo/es5')(session);
 
-var db = new Db('tutor',
+var db = new Db('tutor',                                    // подключение к базе данных
     new Server("localhost", 27017, {safe: true},
         {auto_reconnect: true}, {}));
 
@@ -16,7 +16,7 @@ db.open(function(){
     console.log("mongo db is opened!");
 });
 
-db.collection('notes', function(error, notes) {
+db.collection('notes', function(error, notes) {             // таблица
     db.notes = notes;
 });
 
@@ -24,14 +24,11 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+app.use(express.static(path.join(__dirname, '..')));        // задание корневой папки
 
-var notes_init = [
-    {text: "First note"},
-    {text: "Second note"},
-    {text: "Third note"}
-];
+app.listen(8080);
 
-app.use(session({
+app.use(session({                                           // сохранение сессии в базе данных
     store: new MongoStore({
         url: 'mongodb://localhost:27017/angular_session'
     }),
@@ -40,26 +37,25 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.get("/notes", function(req,res) {
+app.get("/notes", function(req,res) {                           //чтение записок
     db.notes.find(req.query).toArray(function(err, items) {
         res.send(items);
     });
 });
 
-app.post("/notes", function(req,res) {
+app.post("/notes", function(req,res) {                          // добавление записки
     db.notes.insert(req.body);
     res.end();
 });
 
-app.post("/notes/edit/:id", function(req, res) {
-  //  console.log("Editing: ", req.params.id);
+app.post("/notes/edit/:id", function(req, res) {                // редактирование текста записки
     var id = new ObjectID(req.params.id);
     console.log(req.body);
     db.notes.update({_id: id}, { $set:{text: req.body.text} });
     res.end();
 });
 
-app.delete("/notes", function(req,res) {
+app.delete("/notes", function(req,res) {                        // удаление записки
     var id = new ObjectID(req.query.id);
     db.notes.remove({_id: id}, function(err){
         if (err) {
@@ -70,32 +66,3 @@ app.delete("/notes", function(req,res) {
         }
     })
 });
-
-app.put("/notes/:id", function(req, res) {
-    var id = req.params.id;
-    console.log("sending to top note: ", id);
-    var noteOne  = req.session.notes.splice(id,1)[0];
-    req.session.notes.unshift(noteOne);
-    console.log("Notes: ", req.session.notes);
-    res.end();
-});
-
-app.use(express.static(path.join(__dirname, '..')));
-
-app.listen(8080);
-
-
-/*
-
-FOLDER STRUCTURE:
-
-root
-  app 
-  server
-     server.js
-	 package.json
-  index.html
-  package.json
-  
-*/
-  
