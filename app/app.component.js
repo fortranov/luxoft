@@ -11,12 +11,15 @@ var AppComponent = (function () {
     function AppComponent() {
         this.name = "John";
     }
+    AppComponent.prototype.setSection = function (section) {
+        this.section = section;
+    };
     return AppComponent;
 }());
 AppComponent = __decorate([
     core_1.Component({
         selector: 'my-app',
-        template: "\n        <h1>Notes Angular 2 App</h1>\n        <notes></notes>"
+        templateUrl: '/templates/app.component.html'
     })
 ], AppComponent);
 exports.AppComponent = AppComponent;

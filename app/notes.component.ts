@@ -1,6 +1,7 @@
-import {Component} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { Http, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
+import {Observable} from "rxjs";
 
 interface Note {
     text: string;
@@ -9,46 +10,42 @@ interface Note {
 
 @Component({
     selector: 'notes',
-    template: `Notes list:
-    <table>
-        <tr *ngFor="let note of notes; let i=index">
-            <td (click)="select(note._id, note.text)">{{note.text}}</td>
-            <td>{{note.date | date: 'HH:mm dd.MM.yyyy'}}</td> 
-            <td><button (click)="remove(note._id)">remove!</button></td>
-        </tr>
-    </table>
-    <textarea [(ngModel)]="text"></textarea>
-    <button (click)="add()">Add</button>
-    <button (click)="edit()">Edit</button>`
+    templateUrl: 'templates/notes.component.html'
 })
 
 export class NotesComponent {
-
+    @Input() section: string;
     private notesUrl = 'http://localhost:8080/notes';
 
     notes: Note[] ;
     selectedId: string = '';
     text: string;
 
+
     constructor(private http: Http) {
+     //   this.readNotes();
+    }
+
+    ngOnChanges() {
         this.readNotes();
     }
 
     readNotes() {                                              //чтение записок из базы данных
-        this.getNotes().then(notes=>{
+        this.getNotes().subscribe(notes=>{
             this.notes=notes;
             console.log(notes);
         });
     }
 
-    getNotes(): Promise<Note[]> {
-        return this.http.get(this.notesUrl)
-            .toPromise()
-            .then(response => response.json() as Note[]);
+    getNotes(): Observable<Note[]> {
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('section', this.section);
+        return this.http.get(this.notesUrl, {search:params})
+            .map(response => response.json() as Note[]);
     }
 
     add() {                                                     //добавление новой записки
-        let note = { text: this.text, date: Date() };
+        let note = { text: this.text, section: this.section, date: Date() };
         this.text = "";
         this.addNote(note);
     }

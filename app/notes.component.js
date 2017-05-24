@@ -17,22 +17,26 @@ var NotesComponent = (function () {
         this.http = http;
         this.notesUrl = 'http://localhost:8080/notes';
         this.selectedId = '';
-        this.readNotes();
+        //   this.readNotes();
     }
+    NotesComponent.prototype.ngOnChanges = function () {
+        this.readNotes();
+    };
     NotesComponent.prototype.readNotes = function () {
         var _this = this;
-        this.getNotes().then(function (notes) {
+        this.getNotes().subscribe(function (notes) {
             _this.notes = notes;
             console.log(notes);
         });
     };
     NotesComponent.prototype.getNotes = function () {
-        return this.http.get(this.notesUrl)
-            .toPromise()
-            .then(function (response) { return response.json(); });
+        var params = new http_1.URLSearchParams();
+        params.set('section', this.section);
+        return this.http.get(this.notesUrl, { search: params })
+            .map(function (response) { return response.json(); });
     };
     NotesComponent.prototype.add = function () {
-        var note = { text: this.text, date: Date() };
+        var note = { text: this.text, section: this.section, date: Date() };
         this.text = "";
         this.addNote(note);
     };
@@ -66,10 +70,14 @@ var NotesComponent = (function () {
     };
     return NotesComponent;
 }());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", String)
+], NotesComponent.prototype, "section", void 0);
 NotesComponent = __decorate([
     core_1.Component({
         selector: 'notes',
-        template: "Notes list:\n    <table>\n        <tr *ngFor=\"let note of notes; let i=index\">\n            <td (click)=\"select(note._id, note.text)\">{{note.text}}</td>\n            <td>{{note.date | date: 'HH:mm dd.MM.yyyy'}}</td> \n            <td><button (click)=\"remove(note._id)\">remove!</button></td>\n        </tr>\n    </table>\n    <textarea [(ngModel)]=\"text\"></textarea>\n    <button (click)=\"add()\">Add</button>\n    <button (click)=\"edit()\">Edit</button>"
+        templateUrl: 'templates/notes.component.html'
     }),
     __metadata("design:paramtypes", [http_1.Http])
 ], NotesComponent);

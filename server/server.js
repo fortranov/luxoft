@@ -20,6 +20,10 @@ db.collection('notes', function(error, notes) {             // таблица
     db.notes = notes;
 });
 
+db.collection('sections', function(error, sections) {
+    db.sections = sections;
+});
+
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -39,6 +43,12 @@ app.use(session({                                           // сохранен�
 
 app.get("/notes", function(req,res) {                           //чтение записок
     db.notes.find(req.query).toArray(function(err, items) {
+        res.send(items);
+    });
+});
+
+app.get("/sections", function(req,res) {                        // чтение секций
+    db.sections.find(req.query).toArray(function(err, items) {
         res.send(items);
     });
 });
@@ -65,4 +75,18 @@ app.delete("/notes", function(req,res) {                        // удален�
             res.send("Success");
         }
     })
+});
+
+app.post("/sections/replace", function(req,resp) {
+    // do not clear the list
+    if (req.body.length==0) {
+        resp.end();
+    }
+    db.sections.remove({}, function(err, res) {
+        if (err) console.log(err);
+        db.sections.insert(req.body, function(err, res) {
+            if (err) console.log("err after insert",err);
+            resp.end();
+        });
+    });
 });
