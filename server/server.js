@@ -6,6 +6,8 @@ var Db = require('mongodb').Db;
 var Server = require('mongodb').Server;
 var ObjectID = require('mongodb').ObjectID;
 
+var root = __dirname + '/..'
+
 var MongoStore = require('connect-mongo/es5')(session);
 
 var db = new Db('tutor',                                    // подключение к базе данных
@@ -28,7 +30,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-app.use(express.static(path.join(__dirname, '..')));        // задание корневой папки
+app.use(express.static(root));       // задание корневой папки
 
 app.listen(8080);
 
@@ -89,4 +91,8 @@ app.post("/sections/replace", function(req,resp) {
             resp.end();
         });
     });
+});
+
+app.get("*", function(req, res, next) {
+    res.sendFile('index.html', { root : root });
 });

@@ -2,8 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import { Http, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import {Observable} from "rxjs";
+import {NotesServerService} from "./services/NotesServer.service";
 
-interface Note {
+export interface Note {
     text: string;
     date: string;
 }
@@ -22,9 +23,9 @@ export class NotesComponent {
     text: string;
 
 
-    constructor(private http: Http) {
-     //   this.readNotes();
-    }
+    constructor(private http:Http, private notesServer: NotesServerService) {}
+
+
 
     ngOnChanges() {
         this.readNotes();
@@ -37,11 +38,8 @@ export class NotesComponent {
         });
     }
 
-    getNotes(): Observable<Note[]> {
-        let params: URLSearchParams = new URLSearchParams();
-        params.set('section', this.section);
-        return this.http.get(this.notesUrl, {search:params})
-            .map(response => response.json() as Note[]);
+    getNotes() {
+        return this.notesServer.getNotes(this.section);
     }
 
     add() {                                                     //добавление новой записки

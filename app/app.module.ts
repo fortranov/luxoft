@@ -5,10 +5,27 @@ import { AppComponent }   from './app.component';
 import { NotesComponent } from './notes.component';
 import { SectionsComponent } from './sections.component';
 import { HttpModule }    from '@angular/http';
+import {Routes, RouterModule} from "@angular/router";
+import {NotesEditorComponent} from "./NotesEditorComponent";
+import {PageNotFoundComponent} from "./PageNotFoundComponent";
+import {ViewSectionComponent} from "./viewSection.component";
+import {NotesServerService} from "./services/NotesServer.service";
+import {CanDeactivateNote} from "./services/CanDeactivateNote.service";
+
+
+const appRoutes: Routes = [
+    { path: '', component: NotesEditorComponent,
+        canDeactivate: [CanDeactivateNote] },
+    { path: 'viewSection/:name', component: ViewSectionComponent },
+    { path: ':name', component: NotesEditorComponent,
+        canDeactivate: [CanDeactivateNote] },
+    { path: '**', component: PageNotFoundComponent }
+];
 
 @NgModule({
-    imports:      [ BrowserModule, FormsModule, HttpModule  ],
-    declarations: [ AppComponent, NotesComponent, SectionsComponent  ],
-    bootstrap:    [ AppComponent ]
+    imports:      [ BrowserModule, RouterModule.forRoot(appRoutes), FormsModule, HttpModule  ],
+    declarations: [ AppComponent, NotesComponent, SectionsComponent, NotesEditorComponent, PageNotFoundComponent, ViewSectionComponent  ],
+    bootstrap:    [ AppComponent ],
+    providers:    [ NotesServerService, CanDeactivateNote ]
 })
 export class AppModule { }

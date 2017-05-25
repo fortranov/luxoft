@@ -23,6 +23,15 @@ var SectionsComponent = (function () {
         this.sectionChanged = new core_1.EventEmitter();
         this.readSections();
     }
+    Object.defineProperty(SectionsComponent.prototype, "section", {
+        set: function (section) {
+            if (section && section.length > 0) {
+                this.activeSection = section;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     SectionsComponent.prototype.readSections = function () {
         var _this = this;
         this.getSections().subscribe(function (sections) {
@@ -37,8 +46,8 @@ var SectionsComponent = (function () {
             .map(function (response) { return response.json(); });
     };
     SectionsComponent.prototype.showSection = function (section) {
-        this.activeSection = section.title;
-        this.sectionChanged.emit(this.activeSection);
+        //this.activeSection = section;
+        this.sectionChanged.emit(section.title);
     };
     SectionsComponent.prototype.addSection = function (newSection) {
         var title = newSection.value;
@@ -58,6 +67,11 @@ var SectionsComponent = (function () {
     };
     return SectionsComponent;
 }());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", String),
+    __metadata("design:paramtypes", [String])
+], SectionsComponent.prototype, "section", null);
 __decorate([
     core_1.Output(),
     __metadata("design:type", core_1.EventEmitter)

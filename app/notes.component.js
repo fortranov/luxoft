@@ -12,12 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
 require("rxjs/add/operator/toPromise");
+var NotesServer_service_1 = require("./services/NotesServer.service");
 var NotesComponent = (function () {
-    function NotesComponent(http) {
+    function NotesComponent(http, notesServer) {
         this.http = http;
+        this.notesServer = notesServer;
         this.notesUrl = 'http://localhost:8080/notes';
         this.selectedId = '';
-        //   this.readNotes();
     }
     NotesComponent.prototype.ngOnChanges = function () {
         this.readNotes();
@@ -30,10 +31,7 @@ var NotesComponent = (function () {
         });
     };
     NotesComponent.prototype.getNotes = function () {
-        var params = new http_1.URLSearchParams();
-        params.set('section', this.section);
-        return this.http.get(this.notesUrl, { search: params })
-            .map(function (response) { return response.json(); });
+        return this.notesServer.getNotes(this.section);
     };
     NotesComponent.prototype.add = function () {
         var note = { text: this.text, section: this.section, date: Date() };
@@ -79,7 +77,7 @@ NotesComponent = __decorate([
         selector: 'notes',
         templateUrl: 'templates/notes.component.html'
     }),
-    __metadata("design:paramtypes", [http_1.Http])
+    __metadata("design:paramtypes", [http_1.Http, NotesServer_service_1.NotesServerService])
 ], NotesComponent);
 exports.NotesComponent = NotesComponent;
 //# sourceMappingURL=notes.component.js.map

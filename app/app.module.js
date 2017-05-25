@@ -13,6 +13,20 @@ var app_component_1 = require("./app.component");
 var notes_component_1 = require("./notes.component");
 var sections_component_1 = require("./sections.component");
 var http_1 = require("@angular/http");
+var router_1 = require("@angular/router");
+var NotesEditorComponent_1 = require("./NotesEditorComponent");
+var PageNotFoundComponent_1 = require("./PageNotFoundComponent");
+var viewSection_component_1 = require("./viewSection.component");
+var NotesServer_service_1 = require("./services/NotesServer.service");
+var CanDeactivateNote_service_1 = require("./services/CanDeactivateNote.service");
+var appRoutes = [
+    { path: '', component: NotesEditorComponent_1.NotesEditorComponent,
+        canDeactivate: [CanDeactivateNote_service_1.CanDeactivateNote] },
+    { path: 'viewSection/:name', component: viewSection_component_1.ViewSectionComponent },
+    { path: ':name', component: NotesEditorComponent_1.NotesEditorComponent,
+        canDeactivate: [CanDeactivateNote_service_1.CanDeactivateNote] },
+    { path: '**', component: PageNotFoundComponent_1.PageNotFoundComponent }
+];
 var AppModule = (function () {
     function AppModule() {
     }
@@ -20,9 +34,10 @@ var AppModule = (function () {
 }());
 AppModule = __decorate([
     core_1.NgModule({
-        imports: [platform_browser_1.BrowserModule, forms_1.FormsModule, http_1.HttpModule],
-        declarations: [app_component_1.AppComponent, notes_component_1.NotesComponent, sections_component_1.SectionsComponent],
-        bootstrap: [app_component_1.AppComponent]
+        imports: [platform_browser_1.BrowserModule, router_1.RouterModule.forRoot(appRoutes), forms_1.FormsModule, http_1.HttpModule],
+        declarations: [app_component_1.AppComponent, notes_component_1.NotesComponent, sections_component_1.SectionsComponent, NotesEditorComponent_1.NotesEditorComponent, PageNotFoundComponent_1.PageNotFoundComponent, viewSection_component_1.ViewSectionComponent],
+        bootstrap: [app_component_1.AppComponent],
+        providers: [NotesServer_service_1.NotesServerService, CanDeactivateNote_service_1.CanDeactivateNote]
     })
 ], AppModule);
 exports.AppModule = AppModule;

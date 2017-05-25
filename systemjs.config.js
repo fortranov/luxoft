@@ -3,8 +3,9 @@
  * Adjust as necessary for your application needs.
  */
 (function (global) {
-  System.config({
-    paths: {
+    System.config({
+        baseURL: "/",
+        paths: {
       // paths serve as alias
       'npm:': 'node_modules/'
     },
