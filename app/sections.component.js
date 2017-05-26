@@ -21,6 +21,7 @@ var SectionsComponent = (function () {
         this.sectionsUrl = 'sections';
         this.sectionsReplaceUrl = "/sections/replace";
         this.sectionChanged = new core_1.EventEmitter();
+        // this.loginService.userLogin$.subscribe(user => this.readSections());
         this.readSections();
     }
     Object.defineProperty(SectionsComponent.prototype, "section", {

@@ -14,6 +14,8 @@ import {CanDeactivateNote} from "./services/CanDeactivateNote.service";
 import {UserFormComponent} from "./userForm.component";
 import {EqualToValidator} from "./directives/EqualToValidator";
 import {UserUniqueValidator} from "./directives/UserUniqueValidator";
+import {LoginService} from "./services/Login.service";
+import {LoginFormComponent} from "./loginForm.component";
 
 
 const appRoutes: Routes = [
@@ -29,8 +31,8 @@ const appRoutes: Routes = [
 @NgModule({
     imports:      [ BrowserModule, RouterModule.forRoot(appRoutes), FormsModule, HttpModule  ],
     declarations: [ AppComponent, NotesComponent, SectionsComponent, NotesEditorComponent, PageNotFoundComponent,
-        ViewSectionComponent, UserFormComponent, EqualToValidator, UserUniqueValidator  ],
+        ViewSectionComponent, UserFormComponent, EqualToValidator, UserUniqueValidator, LoginFormComponent  ],
     bootstrap:    [ AppComponent ],
-    providers:    [ NotesServerService, CanDeactivateNote ]
+    providers:    [ NotesServerService, CanDeactivateNote, LoginService ]
 })
 export class AppModule { }

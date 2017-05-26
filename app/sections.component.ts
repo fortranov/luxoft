@@ -5,7 +5,7 @@ import {Component, EventEmitter, Output, Input} from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Observable} from "rxjs/Observable";
-
+import {LoginService, LoginUser} from "./services/Login.service";
 
 export interface Section {
     _id?: string;
@@ -20,6 +20,7 @@ export interface Section {
 })
 
 export class SectionsComponent {
+    loginService: LoginService;
     private sectionsUrl = 'sections';
     sections: Section[];
     sectionsReplaceUrl = "/sections/replace";
@@ -34,6 +35,7 @@ export class SectionsComponent {
         new EventEmitter<string>();
 
     constructor(private http: Http) {
+       // this.loginService.userLogin$.subscribe(user => this.readSections());
         this.readSections();
     }
 

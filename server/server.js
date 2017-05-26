@@ -54,21 +54,29 @@ app.post("/users", function(req,res) {
     });
 });
 
+function setUserQuery(req) {
+    req.query.name = req.session.name || "demo";
+}
 
-
-app.get("/notes", function(req,res) {                           //чтение записок
-    db.notes.find(req.query).toArray(function(err, items) {
-        res.send(items);
-    });
+app.get("/notes", function(req,res) {
+    setUserQuery(req);
+    db.notes.find(req.query)
+        .toArray(function(err, items) {
+            res.send(items);
+        });
 });
 
-app.get("/sections", function(req,res) {                        // чтение секций
-    db.sections.find(req.query).toArray(function(err, items) {
-        res.send(items);
-    });
+app.get("/sections", function(req,res) {
+    var userName = req.session.name || "demo";
+    db.users.find({name:userName})
+        .toArray(function(err, items) {
+            var user = items[0];
+            res.send(user.sections||[]);
+        });
 });
 
 app.post("/notes", function(req,res) {                          // добавление записки
+    req.body.name =  req.session.name || "demo";
     db.notes.insert(req.body);
     res.end();
 });
@@ -92,18 +100,13 @@ app.delete("/notes", function(req,res) {                        // удален�
     })
 });
 
-app.post("/sections/replace", function(req,resp) {
-    // do not clear the list
-    if (req.body.length==0) {
-        resp.end();
-    }
-    db.sections.remove({}, function(err, res) {
-        if (err) console.log(err);
-        db.sections.insert(req.body, function(err, res) {
-            if (err) console.log("err after insert",err);
-            resp.end();
+app.post("/sections/replace", function(req,res) {
+    var name = req.session.name || "demo";
+    db.users.update({name:name},
+        {$set:{sections:req.body}},
+        function() {
+            res.end();
         });
-    });
 });
 
 app.get("/checkUserUnique", function(req,res) {
@@ -111,6 +114,23 @@ app.get("/checkUserUnique", function(req,res) {
         res.send(!count);
     })
     //res.send(false);
+});
+
+app.post("/login", function(req,res) {
+    db.users.find(
+        {name:req.body.name,
+            password:req.body.password})
+        .toArray(function(err, items) {
+            if (items.length>0) {
+                req.session.name = req.body.name;
+            }
+            res.send(items.length>0);
+        });
+});
+
+app.get("/logout", function(req, res) {
+    req.session.name = null;
+    res.end();
 });
 
 app.get("*", function(req, res, next) {
