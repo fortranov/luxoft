@@ -21,6 +21,7 @@ var NotesServer_service_1 = require("./services/NotesServer.service");
 var CanDeactivateNote_service_1 = require("./services/CanDeactivateNote.service");
 var userForm_component_1 = require("./userForm.component");
 var EqualToValidator_1 = require("./directives/EqualToValidator");
+var UserUniqueValidator_1 = require("./directives/UserUniqueValidator");
 var appRoutes = [
     { path: '', component: NotesEditorComponent_1.NotesEditorComponent,
         canDeactivate: [CanDeactivateNote_service_1.CanDeactivateNote] },
@@ -39,7 +40,7 @@ AppModule = __decorate([
     core_1.NgModule({
         imports: [platform_browser_1.BrowserModule, router_1.RouterModule.forRoot(appRoutes), forms_1.FormsModule, http_1.HttpModule],
         declarations: [app_component_1.AppComponent, notes_component_1.NotesComponent, sections_component_1.SectionsComponent, NotesEditorComponent_1.NotesEditorComponent, PageNotFoundComponent_1.PageNotFoundComponent,
-            viewSection_component_1.ViewSectionComponent, userForm_component_1.UserFormComponent, EqualToValidator_1.EqualToValidator],
+            viewSection_component_1.ViewSectionComponent, userForm_component_1.UserFormComponent, EqualToValidator_1.EqualToValidator, UserUniqueValidator_1.UserUniqueValidator],
         bootstrap: [app_component_1.AppComponent],
         providers: [NotesServer_service_1.NotesServerService, CanDeactivateNote_service_1.CanDeactivateNote]
     })

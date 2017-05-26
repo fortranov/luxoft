@@ -22,6 +22,10 @@ db.collection('notes', function(error, notes) {             // таблица
     db.notes = notes;
 });
 
+db.collection('users', function(error, users) {
+    db.users = users;
+});
+
 db.collection('sections', function(error, sections) {
     db.sections = sections;
 });
@@ -42,6 +46,15 @@ app.use(session({                                           // сохранен�
     resave: true,
     saveUninitialized: true
 }));
+
+app.post("/users", function(req,res) {
+    db.users.insert(req.body, function(resp) {
+        req.session.name = req.body.name;
+        res.end();
+    });
+});
+
+
 
 app.get("/notes", function(req,res) {                           //чтение записок
     db.notes.find(req.query).toArray(function(err, items) {
@@ -91,6 +104,13 @@ app.post("/sections/replace", function(req,resp) {
             resp.end();
         });
     });
+});
+
+app.get("/checkUserUnique", function(req,res) {
+   db.users.find({name : req.query.user}).count(function(err, count){
+        res.send(!count);
+    })
+    //res.send(false);
 });
 
 app.get("*", function(req, res, next) {
